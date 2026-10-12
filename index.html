@@ -3,60 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Caprichitos - Ropa, juguetes y mucho más</title>
+  <title>Caprichitos - Tienda Oficial</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
     body { background-color: #f5f5f5; color: #222; }
 
-    /* Header & Banner Principal */
-    header { background: #fff; width: 100%; }
-    
-    .banner-container { width: 100%; max-width: 1200px; margin: 0 auto; position: relative; display: flex; justify-content: center; align-items: center; background: #fff; }
-    .main-banner-img { width: 100%; height: auto; max-height: 250px; object-fit: cover; display: block; cursor: pointer; }
+    header { background: #fff; width: 100%; text-align: center; }
+    .banner-container { width: 100%; max-width: 1200px; margin: 0 auto; cursor: pointer; }
+    .main-banner-img { width: 100%; height: auto; max-height: 250px; object-fit: cover; display: block; }
 
-    /* Barra de Búsqueda y Contacto */
     .top-bar { background: #ff6b8b; padding: 10px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
     .header-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; }
 
-    .search-box { flex: 1; max-width: 450px; position: relative; }
+    .search-box { flex: 1; max-width: 450px; }
     .search-box input { width: 100%; padding: 10px 15px; border-radius: 20px; border: none; outline: none; font-size: 14px; }
     
     .header-actions { display: flex; gap: 15px; align-items: center; }
-    .contact-info { display: flex; gap: 10px; font-size: 13px; font-weight: bold; color: #fff; align-items: center; }
+    .contact-info { display: flex; gap: 10px; font-size: 13px; font-weight: bold; color: #fff; }
     .contact-info span { background: rgba(255,255,255,0.25); padding: 5px 12px; border-radius: 15px; }
 
-    .admin-access-btn { background: #222; color: #fff; border: none; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+    .admin-access-btn { background: #222; color: #fff; border: none; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; }
     .admin-access-btn:hover { background: #444; }
 
-    /* Barra de Categorías */
     .category-bar { background: #fff; border-bottom: 1px solid #ddd; padding: 10px 20px; position: sticky; top: 55px; z-index: 99; }
     .category-container { max-width: 1200px; margin: 0 auto; display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
     .category-btn { background: #f0f0f0; border: none; font-size: 13px; font-weight: bold; color: #555; cursor: pointer; padding: 8px 16px; border-radius: 20px; white-space: nowrap; transition: all 0.2s; }
     .category-btn.active, .category-btn:hover { background: #ff6b8b; color: #fff; }
 
-    /* Layout Principal */
     .container { max-width: 1200px; margin: 20px auto; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; padding: 0 15px; }
 
-    /* Lista de Productos */
     .cart-items { background: #fff; border-radius: 8px; padding: 20px; }
     .cart-header { display: flex; align-items: center; gap: 10px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
     
     .item-card { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid #eee; align-items: center; }
-    .item-card img { width: 80px; height: 100px; object-fit: cover; border-radius: 4px; }
+    .item-card img { width: 80px; height: 100px; object-fit: cover; border-radius: 4px; background: #eee; }
     .item-details { flex: 1; }
     .item-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; }
     .item-category { font-size: 11px; background: #ffeef2; color: #ff6b8b; font-weight: bold; padding: 2px 6px; border-radius: 4px; width: fit-content; margin-bottom: 5px; text-transform: uppercase; }
     .item-variant { font-size: 12px; color: #666; margin-bottom: 10px; }
     
-    .price-section { display: flex; gap: 8px; align-items: center; }
     .price-current { font-weight: bold; color: #fa253c; font-size: 15px; }
 
-    /* Controles de cantidad */
     .quantity-controls { display: flex; align-items: center; border: 1px solid #ccc; width: fit-content; border-radius: 4px; margin-top: 10px; }
     .quantity-controls button { border: none; background: none; width: 28px; height: 28px; cursor: pointer; font-size: 16px; }
     .quantity-controls span { width: 30px; text-align: center; font-size: 14px; }
 
-    /* Resumen Lateral */
     .cart-summary { background: #fff; border-radius: 8px; padding: 20px; height: fit-content; position: sticky; top: 120px; }
     .summary-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; }
     .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
@@ -64,23 +55,18 @@
 
     .checkout-btn { width: 100%; background: #ff6b8b; color: #fff; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 15px; }
     .checkout-btn:hover { background: #e05574; }
-    .checkout-btn:disabled { background: #ccc; cursor: not-allowed; }
 
-    /* Modales */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
     .modal-content { background: #fff; width: 90%; max-width: 550px; max-height: 90vh; overflow-y: auto; padding: 25px; border-radius: 8px; position: relative; }
     .close-modal { position: absolute; right: 15px; top: 15px; font-size: 20px; cursor: pointer; border: none; background: none; }
     
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; color: #444; }
-    .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; background: #fff; }
+    .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
 
-    /* Cuadro de Detalles de Pago */
     .payment-details-box { background: #ffeef2; border: 1px dashed #ff6b8b; padding: 12px; border-radius: 6px; margin-top: 10px; font-size: 13px; color: #333; line-height: 1.5; }
     .payment-details-box strong { color: #d81b60; }
 
-    /* Estilos del Panel Admin */
-    .admin-item-list { margin-top: 20px; border-top: 2px dashed #ddd; padding-top: 15px; }
     .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 13px; }
     .admin-del-btn { background: #ff4d4d; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
     
@@ -90,51 +76,46 @@
     @media (max-width: 768px) {
       .container { grid-template-columns: 1fr; }
       .header-container { flex-direction: column; align-items: stretch; text-align: center; }
-      .header-actions { justify-content: center; flex-wrap: wrap; margin-top: 5px; }
+      .header-actions { justify-content: center; flex-wrap: wrap; }
       .category-bar { top: 100px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Encabezado con Banner Desplazable -->
   <header>
-    <div class="banner-container" onclick="openAuthModal()">
+    <div class="banner-container" onclick="openModal('auth-modal')">
       <img src="WhatsApp Image 2026-10-11 at 4.33.26 PM.jpeg" alt="Caprichitos Banner" class="main-banner-img" onerror="this.src='https://via.placeholder.com/1200x250?text=Caprichitos+Tienda';">
     </div>
   </header>
 
-  <!-- Barra de Herramientas Fija -->
   <div class="top-bar">
     <div class="header-container">
       <div class="search-box">
-        <input type="text" id="search-input" placeholder="Buscar ropa, juguetes, biberones, vestidos..." oninput="renderCart()">
+        <input type="text" id="search-input" placeholder="Buscar ropa, juguetes, biberones..." oninput="renderStore()">
       </div>
-
       <div class="header-actions">
         <div class="contact-info">
           <span>📷 @CAPRICHITOS_VZLA</span>
           <span>💬 0414-6519294</span>
         </div>
-        <button class="admin-access-btn" onclick="openAuthModal()">🔒 Admin</button>
+        <button class="admin-access-btn" onclick="openModal('auth-modal')">🔒 Admin</button>
       </div>
     </div>
   </div>
 
-  <!-- Categorías Fijas -->
   <nav class="category-bar">
     <div class="category-container">
-      <button class="category-btn active" onclick="selectCategory('todas', this)">Todas</button>
-      <button class="category-btn" onclick="selectCategory('bebes', this)">Maternidad y Bebé (0-24M)</button>
-      <button class="category-btn" onclick="selectCategory('juguetes', this)">Juguetes</button>
-      <button class="category-btn" onclick="selectCategory('ninos', this)">Ropa de Niños y Niñas</button>
-      <button class="category-btn" onclick="selectCategory('teens', this)">Teens (Tallas 8-14 años)</button>
-      <button class="category-btn" onclick="selectCategory('cuidados', this)">Cuidado y Accesorios</button>
+      <button class="category-btn active" onclick="setCategory('todas', this)">Todas</button>
+      <button class="category-btn" onclick="setCategory('bebes', this)">Maternidad y Bebé (0-24M)</button>
+      <button class="category-btn" onclick="setCategory('juguetes', this)">Juguetes</button>
+      <button class="category-btn" onclick="setCategory('ninos', this)">Ropa de Niños y Niñas</button>
+      <button class="category-btn" onclick="setCategory('teens', this)">Teens (Tallas 8-14 años)</button>
+      <button class="category-btn" onclick="setCategory('cuidados', this)">Cuidado y Accesorios</button>
     </div>
   </nav>
 
   <div class="container">
-    <!-- Lista de artículos -->
     <div class="cart-items">
       <div class="cart-header">
         <input type="checkbox" id="select-all" checked onchange="toggleSelectAll(this)">
@@ -145,7 +126,6 @@
       </div>
     </div>
 
-    <!-- Resumen de compra lateral -->
     <div class="cart-summary">
       <h2 class="summary-title">Resumen del pedido</h2>
       <div class="summary-row">
@@ -160,14 +140,14 @@
     </div>
   </div>
 
-  <!-- Modal de Pago -->
+  <!-- Modal Checkout -->
   <div class="modal-overlay" id="checkout-modal">
     <div class="modal-content">
       <button class="close-modal" onclick="closeModals()">&times;</button>
       <h2 style="margin-bottom: 20px;">Opciones de Entrega y Pago</h2>
 
       <div class="form-group">
-        <label for="shipping-company">Empresa de Envío:</label>
+        <label>Empresa de Envío:</label>
         <select id="shipping-company">
           <option value="MRW">MRW</option>
           <option value="ZOOM">ZOOM</option>
@@ -176,59 +156,55 @@
       </div>
 
       <div class="form-group">
-        <label for="payment-method">Método de Pago:</label>
-        <select id="payment-method" onchange="updatePaymentDetails()">
+        <label>Método de Pago:</label>
+        <select id="payment-method" onchange="updatePaymentInfo()">
           <option value="pago_movil">Pago Móvil</option>
           <option value="zelle">Zelle</option>
           <option value="transferencia">Transferencia Bancaria Nacional</option>
           <option value="binance">Binance (USDT)</option>
         </select>
-
         <div id="payment-info-container" class="payment-details-box"></div>
       </div>
 
-      <div style="background: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 20px; margin-top: 15px;">
+      <div style="background: #f9f9f9; padding: 15px; border-radius: 6px; margin: 15px 0;">
         <div class="summary-row total">
           <span>Total a Pagar:</span>
           <span id="modal-final-total">$0.00</span>
         </div>
       </div>
 
-      <button class="checkout-btn" onclick="sendOrderToWhatsApp()">ENVIAR COMPROBANTE POR WHATSAPP</button>
+      <button class="checkout-btn" onclick="sendWhatsAppOrder()">ENVIAR COMPROBANTE POR WHATSAPP</button>
     </div>
   </div>
 
-  <!-- Modal de Autenticación / Contraseña -->
+  <!-- Modal Admin Auth -->
   <div class="modal-overlay" id="auth-modal">
     <div class="modal-content" style="max-width: 400px;">
       <button class="close-modal" onclick="closeModals()">&times;</button>
       <h2 style="margin-bottom: 15px; color: #ff6b8b;">Acceso Administrador</h2>
-      <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Ingresa la contraseña para gestionar los productos:</p>
-      
       <div class="form-group">
         <label>Contraseña:</label>
-        <input type="password" id="admin-pass-input" placeholder="Ingresa la contraseña" onkeypress="handlePassKey(event)">
+        <input type="password" id="admin-pass" placeholder="Contraseña de admin" onkeypress="if(event.key==='Enter')verifyAdmin()">
       </div>
-      <p id="pass-error-msg" style="color: #fa253c; font-size: 12px; display: none; margin-bottom: 10px;">Contraseña incorrecta. Inténtalo de nuevo.</p>
-      <button class="checkout-btn" onclick="verifyAdminPass()">INGRESAR AL PANEL</button>
+      <p id="pass-error" style="color: #fa253c; font-size: 12px; display: none; margin-bottom: 10px;">Contraseña incorrecta.</p>
+      <button class="checkout-btn" onclick="verifyAdmin()">INGRESAR</button>
     </div>
   </div>
 
-  <!-- Modal de Administración -->
+  <!-- Modal Admin Panel -->
   <div class="modal-overlay" id="admin-modal">
     <div class="modal-content">
       <button class="close-modal" onclick="closeModals()">&times;</button>
       <h2 style="margin-bottom: 15px; color: #ff6b8b;">Panel de Administración</h2>
       
-      <h3 style="font-size: 15px; margin-bottom: 10px;">Agregar Nuevo Producto</h3>
-      <form id="add-product-form" onsubmit="addNewProduct(event)">
+      <form id="add-form" onsubmit="addProduct(event)">
         <div class="form-group">
           <label>Nombre del Producto:</label>
-          <input type="text" id="new-name" required placeholder="Ej: Vestido de Princesa">
+          <input type="text" id="p-name" required placeholder="Ej: Osito de peluche">
         </div>
         <div class="form-group">
           <label>Categoría:</label>
-          <select id="new-category" required>
+          <select id="p-category" required>
             <option value="bebes">Maternidad y Bebé (0-24M)</option>
             <option value="juguetes">Juguetes</option>
             <option value="ninos">Ropa de Niños y Niñas</option>
@@ -237,34 +213,31 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Precio del Producto ($):</label>
-          <input type="number" step="0.01" id="new-price" required placeholder="12.50">
+          <label>Precio ($):</label>
+          <input type="number" step="0.01" id="p-price" required placeholder="15.00">
         </div>
         <div class="form-group">
-          <label>Detalle / Talla / Variante:</label>
-          <input type="text" id="new-variant" required placeholder="Ej: Rojo / Talla 6">
+          <label>Detalle / Variante:</label>
+          <input type="text" id="p-variant" required placeholder="Ej: Mediano / Único">
         </div>
-
         <div class="form-group">
-          <label>URL / Enlace de la Foto del Producto:</label>
-          <input type="url" id="new-img-url" required placeholder="https://i.imgur.com/ejemplo.jpg" oninput="handleImagePreview(this.value)">
+          <label>URL de la Imagen:</label>
+          <input type="url" id="p-img" required placeholder="https://..." oninput="previewImage(this.value)">
           <div class="image-preview-container" id="img-preview-box">
-            <p style="font-size: 11px; color: #666; margin-bottom: 4px;">Vista previa:</p>
-            <img id="img-preview-tag" src="" alt="Vista previa" onerror="this.onerror=null; this.src='https://via.placeholder.com/80x100?text=No+Imagen';">
+            <img id="img-preview" src="" style="max-height: 80px; border-radius: 4px; margin-top: 5px;">
           </div>
         </div>
-
-        <button type="submit" id="save-btn" class="checkout-btn" style="margin-top: 5px;">AÑADIR PRODUCTO</button>
+        <button type="submit" id="add-btn" class="checkout-btn">AÑADIR PRODUCTO</button>
       </form>
 
-      <div class="admin-item-list">
-        <h3 style="font-size: 15px; margin-bottom: 10px;">Gestionar Productos Existentes</h3>
-        <div id="admin-products-container"></div>
+      <div style="margin-top: 25px; border-top: 2px dashed #ddd; padding-top: 15px;">
+        <h3 style="font-size: 15px; margin-bottom: 10px;">Productos en la Nube</h3>
+        <div id="admin-list"></div>
       </div>
     </div>
   </div>
 
-  <!-- Script Principal de la Tienda y Firebase -->
+  <!-- Firebase y Lógica de la Tienda -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -282,64 +255,43 @@
     const db = getFirestore(app);
 
     window.db = db;
-    window.collection = collection;
-    window.onSnapshot = onSnapshot;
+    window.colRef = collection(db, "products");
     window.addDoc = addDoc;
     window.deleteDoc = deleteDoc;
     window.doc = doc;
 
-    // Escuchar la base de datos en tiempo real
-    onSnapshot(collection(db, "products"), (snapshot) => {
-      window.cart = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
+    // Escuchar cambios en tiempo real
+    onSnapshot(window.colRef, (snapshot) => {
+      window.productsList = snapshot.docs.map(d => ({
+        id: d.id,
+        ...d.data(),
         qty: 1,
         selected: true
       }));
-      console.log("🔥 Productos cargados desde Firestore:", window.cart.length);
-      renderCart();
+      console.log("🔥 Productos sincronizados:", window.productsList.length);
+      renderStore();
       if (document.getElementById('admin-modal').style.display === 'flex') {
-        renderAdminProducts();
+        renderAdminList();
       }
     }, (error) => {
-      console.error("Error en Firestore:", error);
-      document.getElementById('items-container').innerHTML = `<p style="text-align: center; color: #fa253c; padding: 20px;">Error al conectar con la base de datos: ${error.message}</p>`;
+      console.error("Error al conectar con Firestore:", error);
+      document.getElementById('items-container').innerHTML = `<p style="text-align: center; color: #fa253c; padding: 20px;">Error de conexión con la base de datos.</p>`;
     });
   </script>
 
   <script>
-    let cart = [];
+    window.productsList = [];
     let currentCategory = 'todas';
-    const ADMIN_PASSWORD = "CAPRICHITOS2026..";
+    const ADMIN_PASS = "CAPRICHITOS2026..";
 
-    const paymentData = {
-      pago_movil: `
-        <strong>Datos Pago Móvil:</strong><br>
-        • <strong>Banco:</strong> Banesco<br>
-        • <strong>Teléfono:</strong> 0414-6519294<br>
-        • <strong>Cédula:</strong> 32.275.394
-      `,
-      zelle: `
-        <strong>Datos Zelle:</strong><br>
-        • <strong>Titular:</strong> JOSÉ PUCHE<br>
-        • <strong>Correo:</strong> Jpuchealvarez@gmail.com
-      `,
-      transferencia: `
-        <strong>Datos Transferencia Bancaria:</strong><br>
-        • <strong>Banco:</strong> Banesco Banco Universal<br>
-        • <strong>Tipo de Cuenta:</strong> Cuenta Corriente (VES)<br>
-        • <strong>Número de Cuenta:</strong> 01340430574301110817<br>
-        • <strong>Cédula/RIF:</strong> V-32275394<br>
-        • <strong>Titular:</strong> VALERIA ANDREINA ROA CARRERO
-      `,
-      binance: `
-        <strong>Datos Binance:</strong><br>
-        • <strong>Moneda:</strong> USDT<br>
-        • <strong>Binance Pay ID / Correo:</strong> Jpuchealvarez@gmail.com
-      `
+    const paymentInfo = {
+      pago_movil: `<strong>Pago Móvil:</strong> Banesco | 0414-6519294 | Cédula: 32.275.394`,
+      zelle: `<strong>Zelle:</strong> JOSÉ PUCHE | Correo: Jpuchealvarez@gmail.com`,
+      transferencia: `<strong>Transferencia Banesco (Corriente):</strong> 01340430574301110817 | RIF: V-32275394 | Titular: VALERIA ROA`,
+      binance: `<strong>Binance (USDT):</strong> Correo / Pay ID: Jpuchealvarez@gmail.com`
     };
 
-    const catNames = {
+    const categoryNames = {
       'bebes': 'Maternidad y Bebé (0-24M)',
       'juguetes': 'Juguetes',
       'ninos': 'Ropa de Niños y Niñas',
@@ -347,250 +299,219 @@
       'cuidados': 'Cuidado y Accesorios'
     };
 
-    function selectCategory(cat, element) {
+    function setCategory(cat, btn) {
       currentCategory = cat;
-      document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-      element.classList.add('active');
-      renderCart();
+      document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderStore();
     }
 
-    function renderCart() {
+    function renderStore() {
       const container = document.getElementById('items-container');
-      const searchInput = document.getElementById('search-input');
-      const query = searchInput ? searchInput.value.toLowerCase() : '';
-      
+      const searchQuery = document.getElementById('search-input').value.toLowerCase();
       container.innerHTML = '';
 
-      if (!cart || cart.length === 0) {
+      if (!window.productsList || window.productsList.length === 0) {
         container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">No hay productos registrados en la base de datos.</p>';
         updateTotals();
         return;
       }
 
-      // FILTRADO ROBUSTO: Muestra todo si está en 'todas' o si coincide con la categoría/búsqueda
-      const filtered = cart.filter(item => {
+      const filtered = window.productsList.filter(item => {
         const itemCat = (item.category || '').toLowerCase().trim();
         const activeCat = currentCategory.toLowerCase().trim();
-        
-        const matchCat = (activeCat === 'todas' || itemCat === activeCat || itemCat.includes(activeCat));
-        const matchQuery = (item.name || '').toLowerCase().includes(query);
-        return matchCat && matchQuery;
+        const matchesCategory = (activeCat === 'todas' || itemCat === activeCat);
+        const matchesSearch = (item.name || '').toLowerCase().includes(searchQuery);
+        return matchesCategory && matchesSearch;
       });
 
       if (filtered.length === 0) {
         container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">No hay productos disponibles en esta sección.</p>';
       } else {
         filtered.forEach(item => {
-          const itemDiv = document.createElement('div');
-          itemDiv.className = 'item-card';
-          itemDiv.innerHTML = `
-            <input type="checkbox" ${item.selected !== false ? 'checked' : ''} onchange="toggleSelect('${item.id}')">
-            <img src="${item.img || ''}" alt="${item.name || ''}" onerror="this.src='https://via.placeholder.com/80x100?text=No+Imagen';">
+          const div = document.createElement('div');
+          div.className = 'item-card';
+          div.innerHTML = `
+            <input type="checkbox" ${item.selected !== false ? 'checked' : ''} onchange="toggleItemSelect('${item.id}')">
+            <img src="${item.img || ''}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/80x100?text=No+Imagen';">
             <div class="item-details">
-              <span class="item-category">${catNames[item.category] || item.category || 'General'}</span>
-              <div class="item-title">${item.name || 'Sin nombre'}</div>
+              <span class="item-category">${categoryNames[item.category] || item.category || 'General'}</span>
+              <div class="item-title">${item.name}</div>
               <div class="item-variant">${item.variant || ''}</div>
-              <div class="price-section">
-                <span class="price-current">$${parseFloat(item.price || 0).toFixed(2)}</span>
-              </div>
+              <div class="price-current">$${parseFloat(item.price || 0).toFixed(2)}</div>
               <div class="quantity-controls">
-                <button onclick="changeQty('${item.id}', -1)">-</button>
+                <button onclick="changeQuantity('${item.id}', -1)">-</button>
                 <span>${item.qty || 1}</span>
-                <button onclick="changeQty('${item.id}', 1)">+</button>
+                <button onclick="changeQuantity('${item.id}', 1)">+</button>
               </div>
             </div>
           `;
-          container.appendChild(itemDiv);
+          container.appendChild(div);
         });
       }
-
       updateTotals();
     }
 
-    function toggleSelect(id) {
-      const item = cart.find(p => p.id === id);
+    function toggleItemSelect(id) {
+      const item = window.productsList.find(p => p.id === id);
       if (item) item.selected = item.selected === false ? true : false;
-      renderCart();
+      renderStore();
     }
 
-    function toggleSelectAll(checkbox) {
-      cart.forEach(item => item.selected = checkbox.checked);
-      renderCart();
+    function toggleSelectAll(masterCheckbox) {
+      window.productsList.forEach(p => p.selected = masterCheckbox.checked);
+      renderStore();
     }
 
-    function changeQty(id, delta) {
-      const item = cart.find(p => p.id === id);
+    function changeQuantity(id, delta) {
+      const item = window.productsList.find(p => p.id === id);
       if (item) {
         item.qty = (item.qty || 1) + delta;
         if (item.qty < 1) item.qty = 1;
       }
-      renderCart();
+      renderStore();
     }
 
     function updateTotals() {
-      const selected = cart.filter(p => p.selected !== false);
+      const selectedItems = window.productsList.filter(p => p.selected !== false);
       let subtotal = 0;
       let totalQty = 0;
 
-      selected.forEach(item => {
-        subtotal += parseFloat(item.price || 0) * (item.qty || 1);
-        totalQty += (item.qty || 1);
+      selectedItems.forEach(i => {
+        subtotal += parseFloat(i.price || 0) * (i.qty || 1);
+        totalQty += (i.qty || 1);
       });
 
-      const countSpan = document.getElementById('selected-count');
-      const subVal = document.getElementById('subtotal-val');
-      const totVal = document.getElementById('total-val');
-      const selectAllCb = document.getElementById('select-all');
+      document.getElementById('selected-count').innerText = totalQty;
+      document.getElementById('subtotal-val').innerText = `$${subtotal.toFixed(2)}`;
+      document.getElementById('total-val').innerText = `$${subtotal.toFixed(2)}`;
 
-      if (countSpan) countSpan.innerText = totalQty;
-      if (subVal) subVal.innerText = `$${subtotal.toFixed(2)}`;
-      if (totVal) totVal.innerText = `$${subtotal.toFixed(2)}`;
-
-      if (selectAllCb) {
-        const allSelected = cart.length > 0 && cart.every(p => p.selected !== false);
-        selectAllCb.checked = allSelected;
+      const masterCb = document.getElementById('select-all');
+      if (masterCb) {
+        masterCb.checked = window.productsList.length > 0 && window.productsList.every(p => p.selected !== false);
       }
     }
 
     function startCheckout() {
-      const selected = cart.filter(p => p.selected !== false);
+      const selected = window.productsList.filter(p => p.selected !== false);
       if (selected.length === 0) {
-        alert("Por favor, selecciona al menos un producto para continuar.");
+        alert("Selecciona al menos un producto para continuar.");
         return;
       }
-      document.getElementById('checkout-modal').style.display = 'flex';
-      updatePaymentDetails();
-      
+      openModal('checkout-modal');
+      updatePaymentInfo();
       let subtotal = selected.reduce((acc, p) => acc + (parseFloat(p.price || 0) * (p.qty || 1)), 0);
       document.getElementById('modal-final-total').innerText = `$${subtotal.toFixed(2)}`;
     }
 
-    function updatePaymentDetails() {
-      const selectedMethod = document.getElementById('payment-method').value;
-      document.getElementById('payment-info-container').innerHTML = paymentData[selectedMethod] || '';
+    function updatePaymentInfo() {
+      const method = document.getElementById('payment-method').value;
+      document.getElementById('payment-info-container').innerHTML = paymentInfo[method] || '';
     }
 
-    function sendOrderToWhatsApp() {
-      const selectedItems = cart.filter(p => p.selected !== false);
+    function sendWhatsAppOrder() {
+      const selected = window.productsList.filter(p => p.selected !== false);
+      const shipping = document.getElementById('shipping-company').value;
       const paySelect = document.getElementById('payment-method');
       const payText = paySelect.options[paySelect.selectedIndex].text;
-      const shipText = document.getElementById('shipping-company').value;
+      
+      let total = selected.reduce((acc, p) => acc + (parseFloat(p.price || 0) * (p.qty || 1)), 0);
 
-      let totalFinal = selectedItems.reduce((acc, p) => acc + (parseFloat(p.price || 0) * (p.qty || 1)), 0);
-
-      let message = `🛍️ *¡NUEVO PEDIDO EN CAPRICHITOS!*\n\n`;
-      message += `*Productos seleccionados:*\n`;
-      selectedItems.forEach((item, i) => {
-        message += `${i + 1}. ${item.name} (${item.variant}) x${item.qty} - $${(parseFloat(item.price) * (item.qty || 1)).toFixed(2)}\n`;
+      let msg = `🛍️ *NUEVO PEDIDO - CAPRICHITOS*\n\n*Productos:* \n`;
+      selected.forEach((p, idx) => {
+        msg += `${idx + 1}. ${p.name} (${p.variant}) x${p.qty} - $${(p.price * p.qty).toFixed(2)}\n`;
       });
+      msg += `\n📦 *Envío:* ${shipping}`;
+      msg += `\n💳 *Pago:* ${payText}`;
+      msg += `\n💰 *Total:* $${total.toFixed(2)}`;
+      msg += `\n\nAdjunto mi comprobante de pago: 👇`;
 
-      message += `\n📦 *Empresa de Envío:* ${shipText}`;
-      message += `\n💳 *Método de Pago:* ${payText}`;
-      message += `\n💰 *Total a pagar:* $${totalFinal.toFixed(2)}`;
-      message += `\n\nAdjunto mi comprobante de pago: 👇`;
-
-      const whatsappPhone = "584146519294";
-      window.open(`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(message)}`, '_blank');
+      window.open(`https://wa.me/584146519294?text=${encodeURIComponent(msg)}`, '_blank');
       closeModals();
     }
 
-    function openAuthModal() {
-      document.getElementById('pass-error-msg').style.display = 'none';
-      document.getElementById('admin-pass-input').value = '';
-      document.getElementById('auth-modal').style.display = 'flex';
-      setTimeout(() => document.getElementById('admin-pass-input').focus(), 100);
-    }
-
-    function handlePassKey(e) {
-      if (e.key === 'Enter') verifyAdminPass();
-    }
-
-    function verifyAdminPass() {
-      const pass = document.getElementById('admin-pass-input').value;
-      if (pass === ADMIN_PASSWORD) {
-        closeModals();
-        document.getElementById('admin-modal').style.display = 'flex';
-        renderAdminProducts();
-      } else {
-        document.getElementById('pass-error-msg').style.display = 'block';
+    function openModal(id) {
+      closeModals();
+      document.getElementById(id).style.display = 'flex';
+      if (id === 'auth-modal') {
+        document.getElementById('pass-error').style.display = 'none';
+        document.getElementById('admin-pass').value = '';
+        setTimeout(() => document.getElementById('admin-pass').focus(), 100);
       }
     }
 
     function closeModals() {
-      document.querySelectorAll('.modal-overlay').forEach(modal => modal.style.display = 'none');
+      document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
     }
 
-    function renderAdminProducts() {
-      const container = document.getElementById('admin-products-container');
-      if (!container) return;
-      container.innerHTML = '';
-
-      cart.forEach(item => {
-        const row = document.createElement('div');
-        row.className = 'admin-item-row';
-        row.innerHTML = `
-          <div>
-            <strong>${item.name}</strong> (${catNames[item.category] || item.category}) - $${parseFloat(item.price).toFixed(2)}
-          </div>
-          <button class="admin-del-btn" onclick="removeProductFromAdmin('${item.id}')">Eliminar</button>
-        `;
-        container.appendChild(row);
-      });
+    function verifyAdmin() {
+      const pass = document.getElementById('admin-pass').value;
+      if (pass === ADMIN_PASS) {
+        openModal('admin-modal');
+        renderAdminList();
+      } else {
+        document.getElementById('pass-error').style.display = 'block';
+      }
     }
 
-    function handleImagePreview(url) {
+    function previewImage(url) {
       const box = document.getElementById('img-preview-box');
-      const tag = document.getElementById('img-preview-tag');
-      if (url.trim().length > 5) {
-        tag.src = url;
+      const img = document.getElementById('img-preview');
+      if (url.length > 5) {
+        img.src = url;
         box.style.display = 'block';
       } else {
         box.style.display = 'none';
       }
     }
 
-    async function addNewProduct(e) {
+    async function addProduct(e) {
       e.preventDefault();
-      
-      const saveBtn = document.getElementById('save-btn');
-      saveBtn.disabled = true;
-      saveBtn.innerText = "Guardando en la nube...";
+      const btn = document.getElementById('add-btn');
+      btn.disabled = true;
+      btn.innerText = "Guardando...";
 
-      const name = document.getElementById('new-name').value;
-      const category = document.getElementById('new-category').value;
-      const price = parseFloat(document.getElementById('new-price').value);
-      const variant = document.getElementById('new-variant').value;
-      const imageUrl = document.getElementById('new-img-url').value;
+      const name = document.getElementById('p-name').value;
+      const category = document.getElementById('p-category').value;
+      const price = parseFloat(document.getElementById('p-price').value);
+      const variant = document.getElementById('p-variant').value;
+      const img = document.getElementById('p-img').value;
 
       try {
-        await window.addDoc(window.collection(window.db, "products"), {
-          name,
-          category,
-          price,
-          variant,
-          img: imageUrl,
-          createdAt: new Date()
-        });
-
-        document.getElementById('add-product-form').reset();
+        await window.addDoc(window.colRef, { name, category, price, variant, img, createdAt: new Date() });
+        document.getElementById('add-form').reset();
         document.getElementById('img-preview-box').style.display = 'none';
-        alert("¡Producto guardado exitosamente en Firebase!");
+        alert("¡Producto agregado exitosamente!");
       } catch (err) {
-        console.error("Error al guardar:", err);
-        alert("Ocurrió un error al guardar el producto.");
+        console.error(err);
+        alert("Error al guardar el producto.");
       } finally {
-        saveBtn.disabled = false;
-        saveBtn.innerText = "AÑADIR PRODUCTO";
+        btn.disabled = false;
+        btn.innerText = "AÑADIR PRODUCTO";
       }
     }
 
-    async function removeProductFromAdmin(id) {
-      if (confirm("¿Seguro que deseas eliminar este producto de la nube?")) {
+    function renderAdminList() {
+      const list = document.getElementById('admin-list');
+      list.innerHTML = '';
+      window.productsList.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'admin-item-row';
+        row.innerHTML = `
+          <div><strong>${item.name}</strong> ($${item.price})</div>
+          <button class="admin-del-btn" onclick="deleteProduct('${item.id}')">Eliminar</button>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    async function deleteProduct(id) {
+      if (confirm("¿Deseas eliminar este producto de Firebase?")) {
         try {
           await window.deleteDoc(window.doc(window.db, "products", id));
           alert("Producto eliminado.");
         } catch (err) {
-          console.error("Error al eliminar:", err);
+          console.error(err);
         }
       }
     }
