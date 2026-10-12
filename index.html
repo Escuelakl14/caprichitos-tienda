@@ -16,15 +16,21 @@
     .top-bar { background: #f7e08b; padding: 10px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     .header-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; }
 
-    .search-box { flex: 1; max-width: 450px; }
+    .search-box { flex: 1; max-width: 400px; }
     .search-box input { width: 100%; padding: 10px 15px; border-radius: 20px; border: 1px solid #e2ca72; outline: none; font-size: 14px; }
     
-    .header-actions { display: flex; gap: 12px; align-items: center; }
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
     .contact-info { display: flex; gap: 8px; font-size: 13px; font-weight: bold; color: #4a3f12; flex-wrap: wrap; align-items: center; }
     
     .social-link { background: rgba(255, 255, 255, 0.65); padding: 6px 12px; border-radius: 15px; display: flex; align-items: center; gap: 6px; text-decoration: none; color: #4a3f12; transition: all 0.2s ease; }
     .social-link:hover { background: #ffffff; transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     .social-link svg { width: 16px; height: 16px; fill: currentColor; }
+
+    /* Botón de Carrito Rápido */
+    .cart-quick-btn { background: #3d3200; color: #fff; padding: 7px 14px; border-radius: 20px; display: flex; align-items: center; gap: 6px; cursor: pointer; border: none; font-weight: bold; font-size: 13px; position: relative; transition: transform 0.2s; }
+    .cart-quick-btn:hover { transform: scale(1.05); background: #222; }
+    .cart-quick-btn svg { width: 18px; height: 18px; fill: #f7e08b; }
+    .cart-badge { background: #ff4d4d; color: white; border-radius: 50%; padding: 2px 6px; font-size: 11px; font-weight: bold; margin-left: 2px; }
 
     .admin-access-btn { background: #222; color: #fff; border: none; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; }
     .admin-access-btn:hover { background: #444; }
@@ -108,7 +114,7 @@
       .container { grid-template-columns: 1fr; }
       .header-container { flex-direction: column; align-items: stretch; text-align: center; }
       .header-actions { justify-content: center; flex-wrap: wrap; }
-      .category-bar { top: 100px; }
+      .category-bar { top: 110px; }
     }
   </style>
 </head>
@@ -150,6 +156,14 @@
             <span>💵 Tasa del Día: <strong id="header-rate-val">Bs. 0,00</strong></span>
           </span>
         </div>
+
+        <!-- Botón de Carrito Rápido Arriba -->
+        <button class="cart-quick-btn" onclick="scrollToCart()" title="Ver Carrito de Compras">
+          <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+          <span>Carrito</span>
+          <span class="cart-badge" id="quick-cart-count">0</span>
+        </button>
+
         <button class="admin-access-btn" onclick="openModal('auth-modal')">🔒 Admin</button>
       </div>
     </div>
@@ -178,7 +192,7 @@
       </div>
     </div>
 
-    <div class="cart-summary">
+    <div class="cart-summary" id="cart-summary-section">
       <h2 class="summary-title">Resumen del pedido</h2>
       <div class="summary-row">
         <span>Subtotal</span>
@@ -424,6 +438,13 @@
       }).format(amount);
     }
 
+    function scrollToCart() {
+      const summarySection = document.getElementById('cart-summary-section');
+      if (summarySection) {
+        summarySection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
     const categoryNames = {
       'bebes': 'Maternidad y Bebé (0-24M)',
       'juguetes': 'Juguetes',
@@ -590,6 +611,7 @@
       const subtotalBs = subtotal * window.exchangeRate;
 
       document.getElementById('selected-count').innerText = totalQty;
+      document.getElementById('quick-cart-count').innerText = totalQty;
       document.getElementById('subtotal-val').innerText = `$${subtotal.toFixed(2)}`;
       document.getElementById('subtotal-bs-val').innerText = `Bs. ${formatBs(subtotalBs)}`;
       document.getElementById('total-val').innerText = `$${subtotal.toFixed(2)}`;
