@@ -367,7 +367,7 @@
         return;
       }
 
-      // CORRECCIÓN CLAVE DE FILTRADO
+      // FILTRADO CORREGIDO PARA MOSTRAR TODO CUANDO ESTÁ EN 'todas'
       const filtered = cart.filter(item => {
         const itemCat = (item.category || '').toLowerCase().trim();
         const activeCat = currentCategory.toLowerCase().trim();
@@ -560,7 +560,7 @@
       const category = document.getElementById('new-category').value;
       const price = parseFloat(document.getElementById('new-price').value);
       const variant = document.getElementById('new-variant').value;
-      const imageUrl = document.getElementById('new-img-url-input') ? document.getElementById('new-img-url-input').value : document.getElementById('new-img-url').value;
+      const imageUrl = document.getElementById('new-img-url').value;
 
       try {
         await window.addDoc(window.collection(window.db, "products"), {
