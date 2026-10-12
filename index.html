@@ -288,26 +288,23 @@
     window.deleteDoc = deleteDoc;
     window.doc = doc;
 
-    // Escuchar la base de datos en tiempo real con manejo de errores visibles
-    try {
-      onSnapshot(collection(db, "products"), (snapshot) => {
-        window.cart = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          qty: 1,
-          selected: true
-        }));
-        renderCart();
-        if (document.getElementById('admin-modal').style.display === 'flex') {
-          renderAdminProducts();
-        }
-      }, (error) => {
-        console.error("Error en Firestore:", error);
-        document.getElementById('items-container').innerHTML = `<p style="text-align: center; color: #fa253c; padding: 20px;">Error al conectar con la base de datos: ${error.message}</p>`;
-      });
-    } catch (e) {
-      console.error("Excepción al iniciar snapshot:", e);
-    }
+    // Escuchar la base de datos en tiempo real
+    onSnapshot(collection(db, "products"), (snapshot) => {
+      window.cart = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        qty: 1,
+        selected: true
+      }));
+      console.log("🔥 Productos cargados desde Firestore:", window.cart.length);
+      renderCart();
+      if (document.getElementById('admin-modal').style.display === 'flex') {
+        renderAdminProducts();
+      }
+    }, (error) => {
+      console.error("Error en Firestore:", error);
+      document.getElementById('items-container').innerHTML = `<p style="text-align: center; color: #fa253c; padding: 20px;">Error al conectar con la base de datos: ${error.message}</p>`;
+    });
   </script>
 
   <script>
@@ -370,12 +367,13 @@
         return;
       }
 
+      // CORRECCIÓN CLAVE DE FILTRADO
       const filtered = cart.filter(item => {
-        const itemCat = (item.category || '').toLowerCase();
-        const itemTitle = (item.name || '').toLowerCase();
+        const itemCat = (item.category || '').toLowerCase().trim();
+        const activeCat = currentCategory.toLowerCase().trim();
         
-        const matchCat = (currentCategory === 'todas' || itemCat === currentCategory.toLowerCase());
-        const matchQuery = itemTitle.includes(query);
+        const matchCat = (activeCat === 'todas' || itemCat === activeCat);
+        const matchQuery = (item.name || '').toLowerCase().includes(query);
         return matchCat && matchQuery;
       });
 
@@ -562,7 +560,7 @@
       const category = document.getElementById('new-category').value;
       const price = parseFloat(document.getElementById('new-price').value);
       const variant = document.getElementById('new-variant').value;
-      const imageUrl = document.getElementById('new-img-url').value;
+      const imageUrl = document.getElementById('new-img-url-input') ? document.getElementById('new-img-url-input').value : document.getElementById('new-img-url').value;
 
       try {
         await window.addDoc(window.collection(window.db, "products"), {
