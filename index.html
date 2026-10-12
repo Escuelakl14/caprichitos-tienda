@@ -85,7 +85,7 @@
 
   <header>
     <div class="banner-container" onclick="openModal('auth-modal')">
-      <img src="WhatsApp Image 2026-10-11 at 4.33.26 PM.jpeg" alt="Caprichitos Banner" class="main-banner-img" onerror="this.src='https://via.placeholder.com/1200x250?text=Caprichitos+Tienda';">
+      <img src="https://raw.githubusercontent.com/Escuelakl14/caprichitos-tienda/main/banner.jpeg" alt="Caprichitos Banner" class="main-banner-img" onerror="this.src='https://via.placeholder.com/1200x250?text=Caprichitos+Tienda';">
     </div>
   </header>
 
@@ -295,7 +295,7 @@
       'bebes': 'Maternidad y Bebé (0-24M)',
       'juguetes': 'Juguetes',
       'ninos': 'Ropa de Niños y Niñas',
-      'teens': 'Teens (8-14 años)',
+      'teens': 'Teens (Tallas 8-14 años)',
       'cuidados': 'Cuidado y Accesorios'
     };
 
@@ -440,9 +440,9 @@
       }
     }
 
-    function closeModals() {
+    closeModals = function() {
       document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-    }
+    };
 
     function verifyAdmin() {
       const pass = document.getElementById('admin-pass').value;
