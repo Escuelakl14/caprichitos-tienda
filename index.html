@@ -45,11 +45,12 @@
     .cart-items { background: #fff; border-radius: 8px; padding: 20px; }
     .cart-header { display: flex; align-items: center; gap: 10px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
     
-    .item-card { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid #eee; align-items: flex-start; }
+    .item-card { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid #eee; align-items: flex-start; position: relative; }
+    .item-card.sold-out { opacity: 0.65; }
     
     /* Estilo galería */
     .product-gallery { display: flex; flex-direction: column; gap: 8px; align-items: center; }
-    .main-img-box { width: 90px; height: 115px; border-radius: 6px; overflow: hidden; background: #eee; border: 1px solid #ddd; cursor: pointer; }
+    .main-img-box { width: 90px; height: 115px; border-radius: 6px; overflow: hidden; background: #eee; border: 1px solid #ddd; cursor: pointer; position: relative; }
     .main-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s; }
     .main-img-box img:hover { transform: scale(1.05); }
 
@@ -60,8 +61,12 @@
     .item-details { flex: 1; }
     .item-title { font-size: 15px; font-weight: bold; margin-bottom: 5px; }
     .item-category { font-size: 11px; background: #fff9db; color: #8a7300; font-weight: bold; padding: 2px 6px; border-radius: 4px; width: fit-content; margin-bottom: 5px; text-transform: uppercase; }
-    .item-variant { font-size: 13px; color: #666; margin-bottom: 10px; }
+    .item-variant { font-size: 13px; color: #666; margin-bottom: 5px; }
     
+    .stock-tag { font-size: 12px; font-weight: bold; padding: 2px 8px; border-radius: 12px; display: inline-block; margin-bottom: 8px; }
+    .stock-available { background: #e6f4ea; color: #137333; }
+    .stock-empty { background: #fce8e6; color: #c5221f; }
+
     .price-current { font-weight: bold; color: #222; font-size: 16px; }
     .price-bs { font-size: 12px; color: #666; font-weight: normal; margin-left: 4px; }
 
@@ -286,7 +291,7 @@
         </div>
       </div>
 
-      <button class="checkout-btn" onclick="sendWhatsAppOrder()">ENVIAR COMPROBANTE POR WHATSAPP</button>
+      <button class="checkout-btn" id="send-order-btn" onclick="sendWhatsAppOrder()">ENVIAR COMPROBANTE POR WHATSAPP</button>
     </div>
   </div>
 
@@ -340,6 +345,10 @@
           <input type="number" step="0.01" id="p-price" required placeholder="15.00">
         </div>
         <div class="form-group">
+          <label>Cantidad en Stock:</label>
+          <input type="number" id="p-stock" required min="0" value="1" placeholder="Ej: 5">
+        </div>
+        <div class="form-group">
           <label>Detalle / Variante:</label>
           <input type="text" id="p-variant" required placeholder="Ej: Mediano / Único">
         </div>
@@ -364,7 +373,7 @@
       <div style="margin-top: 25px; border-top: 2px dashed #ddd; padding-top: 15px;">
         <h3 style="font-size: 15px; margin-bottom: 10px;">Productos en la Nube</h3>
         <div class="form-group" style="margin-bottom: 10px;">
-          <input type="text" id="admin-search-input" placeholder="🔍 Buscar producto por nombre para eliminar..." oninput="renderAdminList()" style="padding: 8px 12px;">
+          <input type="text" id="admin-search-input" placeholder="🔍 Buscar producto por nombre para gestionar/eliminar..." oninput="renderAdminList()" style="padding: 8px 12px;">
         </div>
         <div id="admin-list" style="max-height: 250px; overflow-y: auto;"></div>
       </div>
@@ -374,7 +383,7 @@
   <!-- Firebase y Lógica de la Tienda -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDY6GW2Ad6xVFHT1SjDqNj1jMpQeUcgKPo",
@@ -394,7 +403,7 @@
     window.deleteDoc = deleteDoc;
     window.doc = doc;
     window.setDoc = setDoc;
-    window.getDoc = getDoc;
+    window.updateDoc = updateDoc;
 
     // Sincronizar tasa de cambio en tiempo real
     onSnapshot(doc(db, "settings", "exchangeRate"), (docSnap) => {
@@ -409,12 +418,16 @@
     });
 
     onSnapshot(window.colRef, (snapshot) => {
-      window.productsList = snapshot.docs.map(d => ({
-        id: d.id,
-        ...d.data(),
-        qty: 1,
-        selected: false
-      }));
+      window.productsList = snapshot.docs.map(d => {
+        const data = d.data();
+        return {
+          id: d.id,
+          ...data,
+          stock: data.stock !== undefined ? parseInt(data.stock) : 1,
+          qty: 1,
+          selected: false
+        };
+      });
       renderStore();
       if (document.getElementById('admin-modal').style.display === 'flex') {
         renderAdminList();
@@ -504,11 +517,16 @@
 
           const itemPriceUsd = parseFloat(item.price || 0);
           const itemPriceBs = itemPriceUsd * window.exchangeRate;
+          const isSoldOut = (item.stock <= 0);
+
+          let stockBadge = isSoldOut 
+            ? `<span class="stock-tag stock-empty">🚫 AGOTADO</span>`
+            : `<span class="stock-tag stock-available">✔ Disponibles: ${item.stock}</span>`;
 
           const div = document.createElement('div');
-          div.className = 'item-card';
+          div.className = `item-card ${isSoldOut ? 'sold-out' : ''}`;
           div.innerHTML = `
-            <input type="checkbox" ${item.selected ? 'checked' : ''} onchange="toggleItemSelect('${item.id}')" style="margin-top: 45px;">
+            <input type="checkbox" ${item.selected ? 'checked' : ''} ${isSoldOut ? 'disabled' : ''} onchange="toggleItemSelect('${item.id}')" style="margin-top: 45px;">
             <div class="product-gallery">
               <div class="main-img-box" onclick="openZoomGallery('${item.id}')" title="Ver foto ampliada">
                 <img id="${mainImgId}" src="${item.img || ''}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/90x115?text=No+Imagen';">
@@ -519,11 +537,12 @@
               <span class="item-category">${categoryNames[item.category] || item.category || 'General'}</span>
               <div class="item-title">${item.name}</div>
               <div class="item-variant">${item.variant || ''}</div>
+              <div>${stockBadge}</div>
               <div class="price-current">$${itemPriceUsd.toFixed(2)} <span class="price-bs">(${itemPriceBs > 0 ? 'Bs. ' + formatBs(itemPriceBs) : 'Bs. --'})</span></div>
               <div class="quantity-controls">
-                <button onclick="changeQuantity('${item.id}', -1)">-</button>
-                <span>${item.qty || 1}</span>
-                <button onclick="changeQuantity('${item.id}', 1)">+</button>
+                <button onclick="changeQuantity('${item.id}', -1)" ${isSoldOut ? 'disabled' : ''}>-</button>
+                <span>${isSoldOut ? 0 : (item.qty || 1)}</span>
+                <button onclick="changeQuantity('${item.id}', 1)" ${isSoldOut ? 'disabled' : ''}>+</button>
               </div>
             </div>
           `;
@@ -582,27 +601,36 @@
 
     function toggleItemSelect(id) {
       const item = window.productsList.find(p => p.id === id);
-      if (item) item.selected = !item.selected;
+      if (item && item.stock > 0) {
+        item.selected = !item.selected;
+      }
       renderStore();
     }
 
     function toggleSelectAll(masterCheckbox) {
-      window.productsList.forEach(p => p.selected = masterCheckbox.checked);
+      window.productsList.forEach(p => {
+        if (p.stock > 0) p.selected = masterCheckbox.checked;
+      });
       renderStore();
     }
 
     function changeQuantity(id, delta) {
       const item = window.productsList.find(p => p.id === id);
-      if (item) {
-        item.qty = (item.qty || 1) + delta;
-        if (item.qty < 1) item.qty = 1;
+      if (item && item.stock > 0) {
+        let newQty = (item.qty || 1) + delta;
+        if (newQty > item.stock) {
+          alert(`Solo hay ${item.stock} unidades disponibles de este producto.`);
+          newQty = item.stock;
+        }
+        if (newQty < 1) newQty = 1;
+        item.qty = newQty;
         item.selected = true;
       }
       renderStore();
     }
 
     function updateTotals() {
-      const selectedItems = window.productsList.filter(p => p.selected === true);
+      const selectedItems = window.productsList.filter(p => p.selected === true && p.stock > 0);
       let subtotal = 0;
       let totalQty = 0;
 
@@ -622,14 +650,15 @@
 
       const masterCb = document.getElementById('select-all');
       if (masterCb) {
-        masterCb.checked = window.productsList.length > 0 && window.productsList.every(p => p.selected === true);
+        const availableItems = window.productsList.filter(p => p.stock > 0);
+        masterCb.checked = availableItems.length > 0 && availableItems.every(p => p.selected === true);
       }
     }
 
     function startCheckout() {
-      const selected = window.productsList.filter(p => p.selected === true);
+      const selected = window.productsList.filter(p => p.selected === true && p.stock > 0);
       if (selected.length === 0) {
-        alert("Selecciona al menos un producto para continuar con tu compra.");
+        alert("Selecciona al menos un producto disponible para continuar con tu compra.");
         return;
       }
       openModal('checkout-modal');
@@ -648,14 +677,30 @@
       if (activeCard) activeCard.classList.add('active');
     }
 
-    function sendWhatsAppOrder() {
-      const selected = window.productsList.filter(p => p.selected === true);
+    async function sendWhatsAppOrder() {
+      const selected = window.productsList.filter(p => p.selected === true && p.stock > 0);
+      if (selected.length === 0) return;
+
+      const btn = document.getElementById('send-order-btn');
+      btn.disabled = true;
+      btn.innerText = "Procesando pedido...";
+
       const shipping = document.getElementById('shipping-company').value;
       const paySelect = document.getElementById('payment-method');
       const payText = paySelect.options[paySelect.selectedIndex].text;
       
       let total = selected.reduce((acc, p) => acc + (parseFloat(p.price || 0) * (p.qty || 1)), 0);
       let totalBs = total * window.exchangeRate;
+
+      // Descontar inventario en Firebase para cada producto comprado
+      try {
+        for (const item of selected) {
+          const newStock = Math.max(0, item.stock - item.qty);
+          await window.updateDoc(window.doc(window.db, "products", item.id), { stock: newStock });
+        }
+      } catch (err) {
+        console.error("Error actualizando stock:", err);
+      }
 
       let msg = `🛍️ *NUEVO PEDIDO - CAPRICHITOS*\n\n*Productos:* \n`;
       selected.forEach((p, idx) => {
@@ -669,6 +714,9 @@
       msg += `\n\nAdjunto mi comprobante de pago: 👇`;
 
       window.open(`https://wa.me/584146519294?text=${encodeURIComponent(msg)}`, '_blank');
+      
+      btn.disabled = false;
+      btn.innerText = "ENVIAR COMPROBANTE POR WHATSAPP";
       closeModals();
     }
 
@@ -735,16 +783,18 @@
       const name = document.getElementById('p-name').value;
       const category = document.getElementById('p-category').value;
       const price = parseFloat(document.getElementById('p-price').value);
+      const stock = parseInt(document.getElementById('p-stock').value) || 0;
       const variant = document.getElementById('p-variant').value;
       const img = document.getElementById('p-img').value;
       const img2 = document.getElementById('p-img2').value || '';
       const img3 = document.getElementById('p-img3').value || '';
 
       try {
-        await window.addDoc(window.colRef, { name, category, price, variant, img, img2, img3, createdAt: new Date() });
+        await window.addDoc(window.colRef, { name, category, price, stock, variant, img, img2, img3, createdAt: new Date() });
         document.getElementById('add-form').reset();
+        document.getElementById('p-stock').value = 1;
         document.getElementById('img-preview-box').style.display = 'none';
-        alert("¡Producto agregado con galería exitosamente!");
+        alert("¡Producto agregado con stock exitosamente!");
       } catch (err) {
         console.error(err);
         alert("Error al guardar el producto.");
@@ -772,11 +822,32 @@
         const row = document.createElement('div');
         row.className = 'admin-item-row';
         row.innerHTML = `
-          <div><strong>${item.name}</strong> ($${item.price})</div>
-          <button class="admin-del-btn" onclick="deleteProduct('${item.id}')">Eliminar</button>
+          <div><strong>${item.name}</strong> ($${item.price}) - Stock: <strong>${item.stock}</strong></div>
+          <div style="display: flex; gap: 5px;">
+            <button style="background: #8a7300; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="updateProductStockPrompt('${item.id}', ${item.stock})">Editar Stock</button>
+            <button class="admin-del-btn" onclick="deleteProduct('${item.id}')">Eliminar</button>
+          </div>
         `;
         list.appendChild(row);
       });
+    }
+
+    async function updateProductStockPrompt(id, currentStock) {
+      const newStock = prompt("Ingresa el nuevo stock para este producto:", currentStock);
+      if (newStock !== null) {
+        const parsed = parseInt(newStock);
+        if (!isNaN(parsed) && parsed >= 0) {
+          try {
+            await window.updateDoc(window.doc(window.db, "products", id), { stock: parsed });
+            alert("¡Stock actualizado!");
+          } catch (e) {
+            console.error(e);
+            alert("Error al actualizar el stock.");
+          }
+        } else {
+          alert("Por favor ingresa un número válido mayor o igual a 0.");
+        }
+      }
     }
 
     async function deleteProduct(id) {
