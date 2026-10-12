@@ -8,13 +8,13 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
     body { background-color: #f5f5f5; color: #222; }
 
-    /* Header & Banner Principal (Se desplaza normalmente al bajar) */
+    /* Header & Banner Principal */
     header { background: #fff; width: 100%; }
     
     .banner-container { width: 100%; max-width: 1200px; margin: 0 auto; position: relative; display: flex; justify-content: center; align-items: center; background: #fff; }
     .main-banner-img { width: 100%; height: auto; max-height: 250px; object-fit: cover; display: block; cursor: pointer; }
 
-    /* Barra de Búsqueda y Contacto (Fija arriba al hacer scroll) */
+    /* Barra de Búsqueda y Contacto */
     .top-bar { background: #ff6b8b; padding: 10px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
     .header-container { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; }
 
@@ -28,7 +28,7 @@
     .admin-access-btn { background: #222; color: #fff; border: none; padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
     .admin-access-btn:hover { background: #444; }
 
-    /* Barra de Categorías (Fija justo debajo de la búsqueda) */
+    /* Barra de Categorías */
     .category-bar { background: #fff; border-bottom: 1px solid #ddd; padding: 10px 20px; position: sticky; top: 55px; z-index: 99; }
     .category-container { max-width: 1200px; margin: 0 auto; display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
     .category-btn { background: #f0f0f0; border: none; font-size: 13px; font-weight: bold; color: #555; cursor: pointer; padding: 8px 16px; border-radius: 20px; white-space: nowrap; transition: all 0.2s; }
@@ -269,7 +269,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Configuración exacta obtenida de tu proyecto Caprichitos
+    // Configuración exacta de tu proyecto Caprichitos
     const firebaseConfig = {
       apiKey: "AIzaSyDY6GW2Ad6xVFHT1SjDqNj1jMpQeUcgKPo",
       authDomain: "caprichitos-ddef7.firebaseapp.com",
@@ -359,8 +359,11 @@
       container.innerHTML = '';
 
       const filtered = cart.filter(item => {
-        const matchCat = (currentCategory === 'todas' || item.category === currentCategory);
-        const matchQuery = item.name.toLowerCase().includes(query);
+        const itemCat = (item.category || '').toLowerCase();
+        const itemTitle = (item.name || '').toLowerCase();
+        
+        const matchCat = (currentCategory === 'todas' || itemCat === currentCategory.toLowerCase());
+        const matchQuery = itemTitle.includes(query);
         return matchCat && matchQuery;
       });
 
