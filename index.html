@@ -35,14 +35,24 @@
     .cart-items { background: #fff; border-radius: 8px; padding: 20px; }
     .cart-header { display: flex; align-items: center; gap: 10px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
     
-    .item-card { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid #eee; align-items: center; }
-    .item-card img { width: 80px; height: 100px; object-fit: cover; border-radius: 4px; background: #eee; }
-    .item-details { flex: 1; }
-    .item-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; }
-    .item-category { font-size: 11px; background: #ffeef2; color: #ff6b8b; font-weight: bold; padding: 2px 6px; border-radius: 4px; width: fit-content; margin-bottom: 5px; text-transform: uppercase; }
-    .item-variant { font-size: 12px; color: #666; margin-bottom: 10px; }
+    .item-card { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px solid #eee; align-items: flex-start; }
     
-    .price-current { font-weight: bold; color: #fa253c; font-size: 15px; }
+    /* Estilo galería tipo Shein */
+    .product-gallery { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+    .main-img-box { width: 90px; height: 115px; border-radius: 6px; overflow: hidden; background: #eee; border: 1px solid #ddd; cursor: pointer; }
+    .main-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s; }
+    .main-img-box img:hover { transform: scale(1.05); }
+
+    .thumbnails-row { display: flex; gap: 4px; max-width: 90px; overflow-x: auto; }
+    .thumb-img { width: 26px; height: 32px; object-fit: cover; border-radius: 3px; border: 1px solid #ccc; cursor: pointer; opacity: 0.7; transition: opacity 0.2s; }
+    .thumb-img:hover, .thumb-img.active-thumb { opacity: 1; border-color: #ff6b8b; }
+
+    .item-details { flex: 1; }
+    .item-title { font-size: 15px; font-weight: bold; margin-bottom: 5px; }
+    .item-category { font-size: 11px; background: #ffeef2; color: #ff6b8b; font-weight: bold; padding: 2px 6px; border-radius: 4px; width: fit-content; margin-bottom: 5px; text-transform: uppercase; }
+    .item-variant { font-size: 13px; color: #666; margin-bottom: 10px; }
+    
+    .price-current { font-weight: bold; color: #fa253c; font-size: 16px; }
 
     .quantity-controls { display: flex; align-items: center; border: 1px solid #ccc; width: fit-content; border-radius: 4px; margin-top: 10px; }
     .quantity-controls button { border: none; background: none; width: 28px; height: 28px; cursor: pointer; font-size: 16px; }
@@ -74,8 +84,12 @@
     .admin-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 13px; }
     .admin-del-btn { background: #ff4d4d; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
     
-    .image-preview-container { margin-top: 8px; display: none; text-align: center; }
-    .image-preview-container img { width: 80px; height: 100px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
+    .image-preview-container { margin-top: 8px; display: none; display: flex; gap: 5px; justify-content: center; }
+    .image-preview-container img { width: 50px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
+
+    /* Modal Visor de Imagen Grande (Estilo Shein) */
+    #image-viewer-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
+    #image-viewer-modal img { max-width: 90%; max-height: 85vh; border-radius: 6px; object-fit: contain; }
 
     @media (max-width: 768px) {
       .container { grid-template-columns: 1fr; }
@@ -142,6 +156,12 @@
       </div>
       <button class="checkout-btn" onclick="startCheckout()">CONTINUAR COMPRA</button>
     </div>
+  </div>
+
+  <!-- Visor de imagen grande estilo Shein -->
+  <div id="image-viewer-modal" onclick="this.style.display='none'">
+    <button style="position: absolute; top: 20px; right: 25px; background: none; border: none; color: white; font-size: 30px; cursor: pointer;">&times;</button>
+    <img id="modal-zoomed-img" src="">
   </div>
 
   <!-- Modal Checkout -->
@@ -249,13 +269,22 @@
           <label>Detalle / Variante:</label>
           <input type="text" id="p-variant" required placeholder="Ej: Mediano / Único">
         </div>
+        
+        <!-- Galería en Admin -->
         <div class="form-group">
-          <label>URL de la Imagen:</label>
-          <input type="url" id="p-img" required placeholder="https://..." oninput="previewImage(this.value)">
-          <div class="image-preview-container" id="img-preview-box">
-            <img id="img-preview" src="" style="max-height: 80px; border-radius: 4px; margin-top: 5px;">
-          </div>
+          <label>URL Foto Principal:</label>
+          <input type="url" id="p-img" required placeholder="https://..." oninput="previewImages()">
         </div>
+        <div class="form-group">
+          <label>URL Foto Adicional 1 (Opcional):</label>
+          <input type="url" id="p-img2" placeholder="https://..." oninput="previewImages()">
+        </div>
+        <div class="form-group">
+          <label>URL Foto Adicional 2 (Opcional):</label>
+          <input type="url" id="p-img3" placeholder="https://..." oninput="previewImages()">
+          <div class="image-preview-container" id="img-preview-box" style="margin-top: 10px;"></div>
+        </div>
+
         <button type="submit" id="add-btn" class="checkout-btn">AÑADIR PRODUCTO</button>
       </form>
 
@@ -294,7 +323,7 @@
         id: d.id,
         ...d.data(),
         qty: 1,
-        selected: false // Inician sin seleccionar (en cero para el usuario)
+        selected: false
       }));
       renderStore();
       if (document.getElementById('admin-modal').style.display === 'flex') {
@@ -348,11 +377,32 @@
         container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">No hay productos disponibles en esta sección.</p>';
       } else {
         filtered.forEach(item => {
+          // Recopilar todas las imágenes disponibles
+          let imgs = [item.img];
+          if (item.img2) imgs.push(item.img2);
+          if (item.img3) imgs.push(item.img3);
+
+          const mainImgId = `main-img-${item.id}`;
+          
+          let thumbsHtml = '';
+          if (imgs.length > 1) {
+            thumbsHtml = `<div class="thumbnails-row">`;
+            imgs.forEach((url, idx) => {
+              thumbsHtml += `<img src="${url}" class="thumb-img ${idx === 0 ? 'active-thumb' : ''}" onclick="changeMainImage('${item.id}', '${url}', this)">`;
+            });
+            thumbsHtml += `</div>`;
+          }
+
           const div = document.createElement('div');
           div.className = 'item-card';
           div.innerHTML = `
-            <input type="checkbox" ${item.selected ? 'checked' : ''} onchange="toggleItemSelect('${item.id}')">
-            <img src="${item.img || ''}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/80x100?text=No+Imagen';">
+            <input type="checkbox" ${item.selected ? 'checked' : ''} onchange="toggleItemSelect('${item.id}')" style="margin-top: 45px;">
+            <div class="product-gallery">
+              <div class="main-img-box" onclick="openZoom('${item.id}')" title="Ver foto ampliada">
+                <img id="${mainImgId}" src="${item.img || ''}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/90x115?text=No+Imagen';">
+              </div>
+              ${thumbsHtml}
+            </div>
             <div class="item-details">
               <span class="item-category">${categoryNames[item.category] || item.category || 'General'}</span>
               <div class="item-title">${item.name}</div>
@@ -371,6 +421,25 @@
       updateTotals();
     }
 
+    // Cambiar foto principal al hacer clic en miniatura
+    window.changeMainImage = function(itemId, url, thumbElement) {
+      const mainImg = document.getElementById(`main-img-${itemId}`);
+      if (mainImg) mainImg.src = url;
+      // Actualizar borde activo en miniaturas
+      const parent = thumbElement.parentElement;
+      parent.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active-thumb'));
+      thumbElement.classList.add('active-thumb');
+    }
+
+    // Abrir visor grande estilo Shein
+    window.openZoom = function(itemId) {
+      const mainImg = document.getElementById(`main-img-${itemId}`);
+      if (mainImg && mainImg.src) {
+        document.getElementById('modal-zoomed-img').src = mainImg.src;
+        document.getElementById('image-viewer-modal').style.display = 'flex';
+      }
+    }
+
     function toggleItemSelect(id) {
       const item = window.productsList.find(p => p.id === id);
       if (item) item.selected = !item.selected;
@@ -387,6 +456,7 @@
       if (item) {
         item.qty = (item.qty || 1) + delta;
         if (item.qty < 1) item.qty = 1;
+        item.selected = true;
       }
       renderStore();
     }
@@ -475,15 +545,19 @@
       }
     }
 
-    function previewImage(url) {
+    function previewImages() {
       const box = document.getElementById('img-preview-box');
-      const img = document.getElementById('img-preview');
-      if (url.length > 5) {
-        img.src = url;
-        box.style.display = 'block';
-      } else {
-        box.style.display = 'none';
-      }
+      const img1 = document.getElementById('p-img').value;
+      const img2 = document.getElementById('p-img2').value;
+      const img3 = document.getElementById('p-img3').value;
+      
+      let html = '';
+      if (img1) html += `<img src="${img1}">`;
+      if (img2) html += `<img src="${img2}">`;
+      if (img3) html += `<img src="${img3}">`;
+      
+      box.innerHTML = html;
+      box.style.display = html ? 'flex' : 'none';
     }
 
     async function addProduct(e) {
@@ -497,12 +571,14 @@
       const price = parseFloat(document.getElementById('p-price').value);
       const variant = document.getElementById('p-variant').value;
       const img = document.getElementById('p-img').value;
+      const img2 = document.getElementById('p-img2').value || '';
+      const img3 = document.getElementById('p-img3').value || '';
 
       try {
-        await window.addDoc(window.colRef, { name, category, price, variant, img, createdAt: new Date() });
+        await window.addDoc(window.colRef, { name, category, price, variant, img, img2, img3, createdAt: new Date() });
         document.getElementById('add-form').reset();
         document.getElementById('img-preview-box').style.display = 'none';
-        alert("¡Producto agregado exitosamente!");
+        alert("¡Producto agregado con galería exitosamente!");
       } catch (err) {
         console.error(err);
         alert("Error al guardar el producto.");
