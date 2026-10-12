@@ -126,7 +126,7 @@
         <div class="contact-info">
           <span>📷 @CAPRICHITOS_VZLA</span>
           <span>💬 0414-6519294</span>
-          <span>💵 Tasa Binance: <strong id="header-rate-val">Bs. 0.00</strong></span>
+          <span>💵 Tasa Binance: <strong id="header-rate-val">Bs. 0,00</strong></span>
         </div>
         <button class="admin-access-btn" onclick="openModal('auth-modal')">🔒 Admin</button>
       </div>
@@ -163,7 +163,7 @@
       </div>
       <div class="summary-row" style="color: #666; font-size: 13px;">
         <span>Subtotal (Bs.)</span>
-        <span id="subtotal-bs-val">Bs. 0.00</span>
+        <span id="subtotal-bs-val">Bs. 0,00</span>
       </div>
       <div class="summary-row total">
         <span>Total estimado</span>
@@ -171,7 +171,7 @@
       </div>
       <div class="summary-row" style="font-weight: bold; color: #8a7300; font-size: 15px; margin-top: -5px;">
         <span>Total en Bs.</span>
-        <span id="total-bs-val">Bs. 0.00</span>
+        <span id="total-bs-val">Bs. 0,00</span>
       </div>
       <button class="checkout-btn" onclick="startCheckout()">CONTINUAR COMPRA</button>
     </div>
@@ -245,7 +245,7 @@
         </div>
         <div class="summary-row" style="font-weight: bold; color: #8a7300; font-size: 16px; margin-top: 5px;">
           <span>Total a Pagar (Bs.):</span>
-          <span id="modal-final-total-bs">Bs. 0.00</span>
+          <span id="modal-final-total-bs">Bs. 0,00</span>
         </div>
       </div>
 
@@ -362,7 +362,7 @@
       } else {
         window.exchangeRate = 0;
       }
-      document.getElementById('header-rate-val').innerText = `Bs. ${window.exchangeRate.toFixed(2)}`;
+      document.getElementById('header-rate-val').innerText = `Bs. ${formatBs(window.exchangeRate)}`;
       document.getElementById('rate-input').value = window.exchangeRate;
       renderStore();
     });
@@ -391,6 +391,15 @@
 
     let activeGalleryImages = [];
     let activeGalleryIndex = 0;
+
+    // Función para formatear bolívares con puntos de miles y coma decimal (Ej: 31.500,00)
+    function formatBs(amount) {
+      if (isNaN(amount) || amount === 0) return '0,00';
+      return new Intl.NumberFormat('es-VE', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(amount);
+    }
 
     const categoryNames = {
       'bebes': 'Maternidad y Bebé (0-24M)',
@@ -462,7 +471,7 @@
               <span class="item-category">${categoryNames[item.category] || item.category || 'General'}</span>
               <div class="item-title">${item.name}</div>
               <div class="item-variant">${item.variant || ''}</div>
-              <div class="price-current">$${itemPriceUsd.toFixed(2)} <span class="price-bs">(${itemPriceBs > 0 ? 'Bs. ' + itemPriceBs.toFixed(2) : 'Bs. --'})</span></div>
+              <div class="price-current">$${itemPriceUsd.toFixed(2)} <span class="price-bs">(${itemPriceBs > 0 ? 'Bs. ' + formatBs(itemPriceBs) : 'Bs. --'})</span></div>
               <div class="quantity-controls">
                 <button onclick="changeQuantity('${item.id}', -1)">-</button>
                 <span>${item.qty || 1}</span>
@@ -558,9 +567,9 @@
 
       document.getElementById('selected-count').innerText = totalQty;
       document.getElementById('subtotal-val').innerText = `$${subtotal.toFixed(2)}`;
-      document.getElementById('subtotal-bs-val').innerText = `Bs. ${subtotalBs.toFixed(2)}`;
+      document.getElementById('subtotal-bs-val').innerText = `Bs. ${formatBs(subtotalBs)}`;
       document.getElementById('total-val').innerText = `$${subtotal.toFixed(2)}`;
-      document.getElementById('total-bs-val').innerText = `Bs. ${subtotalBs.toFixed(2)}`;
+      document.getElementById('total-bs-val').innerText = `Bs. ${formatBs(subtotalBs)}`;
 
       const masterCb = document.getElementById('select-all');
       if (masterCb) {
@@ -580,7 +589,7 @@
       let subtotalBs = subtotal * window.exchangeRate;
 
       document.getElementById('modal-final-total').innerText = `$${subtotal.toFixed(2)}`;
-      document.getElementById('modal-final-total-bs').innerText = `Bs. ${subtotalBs.toFixed(2)}`;
+      document.getElementById('modal-final-total-bs').innerText = `Bs. ${formatBs(subtotalBs)}`;
     }
 
     function updatePaymentInfo() {
@@ -602,12 +611,12 @@
       let msg = `🛍️ *NUEVO PEDIDO - CAPRICHITOS*\n\n*Productos:* \n`;
       selected.forEach((p, idx) => {
         const itemBs = (p.price * p.qty) * window.exchangeRate;
-        msg += `${idx + 1}. ${p.name} (${p.variant}) x${p.qty} - $${(p.price * p.qty).toFixed(2)} (Bs. ${itemBs.toFixed(2)})\n`;
+        msg += `${idx + 1}. ${p.name} (${p.variant}) x${p.qty} - $${(p.price * p.qty).toFixed(2)} (Bs. ${formatBs(itemBs)})\n`;
       });
       msg += `\n📦 *Envío:* ${shipping}`;
       msg += `\n💳 *Pago:* ${payText}`;
-      msg += `\n💵 *Tasa Binance Usada:* Bs. ${window.exchangeRate.toFixed(2)} / $`;
-      msg += `\n💰 *Total:* $${total.toFixed(2)} (Bs. ${totalBs.toFixed(2)})`;
+      msg += `\n💵 *Tasa Binance Usada:* Bs. ${formatBs(window.exchangeRate)} / $`;
+      msg += `\n💰 *Total:* $${total.toFixed(2)} (Bs. ${formatBs(totalBs)})`;
       msg += `\n\nAdjunto mi comprobante de pago: 👇`;
 
       window.open(`https://wa.me/584146519294?text=${encodeURIComponent(msg)}`, '_blank');
