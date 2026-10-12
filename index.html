@@ -87,9 +87,15 @@
     .image-preview-container { margin-top: 8px; display: none; display: flex; gap: 5px; justify-content: center; }
     .image-preview-container img { width: 50px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
 
-    /* Modal Visor de Imagen Grande (Estilo Shein) */
-    #image-viewer-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
-    #image-viewer-modal img { max-width: 90%; max-height: 85vh; border-radius: 6px; object-fit: contain; }
+    /* Modal Visor de Imagen Grande con Flechas estilo Shein */
+    #image-viewer-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; }
+    #image-viewer-modal img { max-width: 85%; max-height: 75vh; border-radius: 8px; object-fit: contain; }
+    
+    .gallery-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.3); color: white; border: none; font-size: 28px; padding: 12px 18px; cursor: pointer; border-radius: 50%; transition: background 0.2s; user-select: none; }
+    .gallery-btn:hover { background: rgba(255,255,255,0.7); color: #222; }
+    .gallery-btn.prev { left: 20px; }
+    .gallery-btn.next { right: 20px; }
+    .gallery-counter { color: #fff; margin-top: 15px; font-size: 14px; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 15px; }
 
     @media (max-width: 768px) {
       .container { grid-template-columns: 1fr; }
@@ -158,10 +164,13 @@
     </div>
   </div>
 
-  <!-- Visor de imagen grande estilo Shein -->
-  <div id="image-viewer-modal" onclick="this.style.display='none'">
-    <button style="position: absolute; top: 20px; right: 25px; background: none; border: none; color: white; font-size: 30px; cursor: pointer;">&times;</button>
+  <!-- Visor de imagen grande con flechitas estilo Shein -->
+  <div id="image-viewer-modal">
+    <button style="position: absolute; top: 20px; right: 25px; background: none; border: none; color: white; font-size: 35px; cursor: pointer; z-index: 2001;" onclick="closeZoom()">&times;</button>
+    <button class="gallery-btn prev" id="btn-prev" onclick="navigateGallery(-1)">❮</button>
     <img id="modal-zoomed-img" src="">
+    <button class="gallery-btn next" id="btn-next" onclick="navigateGallery(1)">❯</button>
+    <div class="gallery-counter" id="gallery-counter">1 / 1</div>
   </div>
 
   <!-- Modal Checkout -->
@@ -270,7 +279,6 @@
           <input type="text" id="p-variant" required placeholder="Ej: Mediano / Único">
         </div>
         
-        <!-- Galería en Admin -->
         <div class="form-group">
           <label>URL Foto Principal:</label>
           <input type="url" id="p-img" required placeholder="https://..." oninput="previewImages()">
@@ -339,6 +347,10 @@
     let currentCategory = 'todas';
     const ADMIN_PASS = "CAPRICHITOS2026..";
 
+    // Variables globales para la galería con flechitas
+    let activeGalleryImages = [];
+    let activeGalleryIndex = 0;
+
     const categoryNames = {
       'bebes': 'Maternidad y Bebé (0-24M)',
       'juguetes': 'Juguetes',
@@ -377,7 +389,6 @@
         container.innerHTML = '<p style="text-align: center; color: #888; padding: 20px;">No hay productos disponibles en esta sección.</p>';
       } else {
         filtered.forEach(item => {
-          // Recopilar todas las imágenes disponibles
           let imgs = [item.img];
           if (item.img2) imgs.push(item.img2);
           if (item.img3) imgs.push(item.img3);
@@ -398,7 +409,7 @@
           div.innerHTML = `
             <input type="checkbox" ${item.selected ? 'checked' : ''} onchange="toggleItemSelect('${item.id}')" style="margin-top: 45px;">
             <div class="product-gallery">
-              <div class="main-img-box" onclick="openZoom('${item.id}')" title="Ver foto ampliada">
+              <div class="main-img-box" onclick="openZoomGallery('${item.id}')" title="Ver foto ampliada">
                 <img id="${mainImgId}" src="${item.img || ''}" alt="${item.name}" onerror="this.src='https://via.placeholder.com/90x115?text=No+Imagen';">
               </div>
               ${thumbsHtml}
@@ -421,23 +432,52 @@
       updateTotals();
     }
 
-    // Cambiar foto principal al hacer clic en miniatura
     window.changeMainImage = function(itemId, url, thumbElement) {
       const mainImg = document.getElementById(`main-img-${itemId}`);
       if (mainImg) mainImg.src = url;
-      // Actualizar borde activo en miniaturas
       const parent = thumbElement.parentElement;
       parent.querySelectorAll('.thumb-img').forEach(t => t.classList.remove('active-thumb'));
       thumbElement.classList.add('active-thumb');
     }
 
-    // Abrir visor grande estilo Shein
-    window.openZoom = function(itemId) {
-      const mainImg = document.getElementById(`main-img-${itemId}`);
-      if (mainImg && mainImg.src) {
-        document.getElementById('modal-zoomed-img').src = mainImg.src;
-        document.getElementById('image-viewer-modal').style.display = 'flex';
+    // Abrir la galería en grande con flechas para navegar
+    window.openZoomGallery = function(itemId) {
+      const item = window.productsList.find(p => p.id === itemId);
+      if (!item) return;
+
+      activeGalleryImages = [item.img];
+      if (item.img2) activeGalleryImages.push(item.img2);
+      if (item.img3) activeGalleryImages.push(item.img3);
+
+      activeGalleryIndex = 0;
+      updateGalleryDisplay();
+      document.getElementById('image-viewer-modal').style.display = 'flex';
+    }
+
+    window.navigateGallery = function(direction) {
+      activeGalleryIndex += direction;
+      if (activeGalleryIndex < 0) activeGalleryIndex = activeGalleryImages.length - 1;
+      if (activeGalleryIndex >= activeGalleryImages.length) activeGalleryIndex = 0;
+      updateGalleryDisplay();
+    }
+
+    function updateGalleryDisplay() {
+      document.getElementById('modal-zoomed-img').src = activeGalleryImages[activeGalleryIndex];
+      document.getElementById('gallery-counter').innerText = `${activeGalleryIndex + 1} / ${activeGalleryImages.length}`;
+      
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+      if (activeGalleryImages.length <= 1) {
+        btnPrev.style.display = 'none';
+        btnNext.style.display = 'none';
+      } else {
+        btnPrev.style.display = 'block';
+        btnNext.style.display = 'block';
       }
+    }
+
+    window.closeZoom = function() {
+      document.getElementById('image-viewer-modal').style.display = 'none';
     }
 
     function toggleItemSelect(id) {
