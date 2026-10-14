@@ -63,6 +63,8 @@
     .item-category { font-size: 11px; background: #fff9db; color: #8a7300; font-weight: bold; padding: 2px 6px; border-radius: 4px; width: fit-content; margin-bottom: 5px; text-transform: uppercase; }
     .item-variant { font-size: 13px; color: #666; margin-bottom: 5px; }
     
+    .size-tag { font-size: 11px; background: #eef2ff; color: #3730a3; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 5px; border: 1px solid #c7d2fe; }
+    
     .stock-tag { font-size: 12px; font-weight: bold; padding: 2px 8px; border-radius: 12px; display: inline-block; margin-bottom: 8px; }
     .stock-available { background: #e6f4ea; color: #137333; }
     .stock-empty { background: #fce8e6; color: #c5221f; }
@@ -327,7 +329,7 @@
       <form id="add-form" onsubmit="addProduct(event)">
         <div class="form-group">
           <label>Nombre del Producto:</label>
-          <input type="text" id="p-name" required placeholder="Ej: Osito de peluche">
+          <input type="text" id="p-name" required placeholder="Ej: Conjunto de Algodón">
         </div>
         <div class="form-group">
           <label>Categoría:</label>
@@ -345,12 +347,16 @@
           <input type="number" step="0.01" id="p-price" required placeholder="15.00">
         </div>
         <div class="form-group">
+          <label>Talla (Ej: 0-3M, 2T, Talla 6, Única):</label>
+          <input type="text" id="p-size" placeholder="Ej: 3-6M o Talla 8">
+        </div>
+        <div class="form-group">
           <label>Cantidad en Stock:</label>
           <input type="number" id="p-stock" required min="0" value="1" placeholder="Ej: 5">
         </div>
         <div class="form-group">
-          <label>Detalle / Variante:</label>
-          <input type="text" id="p-variant" required placeholder="Ej: Mediano / Único">
+          <label>Detalle / Variante / Color:</label>
+          <input type="text" id="p-variant" required placeholder="Ej: Azul / Estampado">
         </div>
         
         <div class="form-group">
@@ -424,6 +430,7 @@
           id: d.id,
           ...data,
           stock: data.stock !== undefined ? parseInt(data.stock) : 1,
+          size: data.size || '',
           qty: 1,
           selected: false
         };
@@ -519,6 +526,8 @@
           const itemPriceBs = itemPriceUsd * window.exchangeRate;
           const isSoldOut = (item.stock <= 0);
 
+          let sizeHtml = item.size ? `<div><span class="size-tag">📏 Talla: ${item.size}</span></div>` : '';
+
           let stockBadge = isSoldOut 
             ? `<span class="stock-tag stock-empty">🚫 AGOTADO</span>`
             : `<span class="stock-tag stock-available">✔ Disponibles: ${item.stock}</span>`;
@@ -537,6 +546,7 @@
               <span class="item-category">${categoryNames[item.category] || item.category || 'General'}</span>
               <div class="item-title">${item.name}</div>
               <div class="item-variant">${item.variant || ''}</div>
+              ${sizeHtml}
               <div>${stockBadge}</div>
               <div class="price-current">$${itemPriceUsd.toFixed(2)} <span class="price-bs">(${itemPriceBs > 0 ? 'Bs. ' + formatBs(itemPriceBs) : 'Bs. --'})</span></div>
               <div class="quantity-controls">
@@ -705,7 +715,8 @@
       let msg = `🛍️ *NUEVO PEDIDO - CAPRICHITOS*\n\n*Productos:* \n`;
       selected.forEach((p, idx) => {
         const itemBs = (p.price * p.qty) * window.exchangeRate;
-        msg += `${idx + 1}. ${p.name} (${p.variant}) x${p.qty} - $${(p.price * p.qty).toFixed(2)} (Bs. ${formatBs(itemBs)})\n`;
+        const sizeInfo = p.size ? ` [Talla: ${p.size}]` : '';
+        msg += `${idx + 1}. ${p.name} (${p.variant})${sizeInfo} x${p.qty} - $${(p.price * p.qty).toFixed(2)} (Bs. ${formatBs(itemBs)})\n`;
       });
       msg += `\n📦 *Envío:* ${shipping}`;
       msg += `\n💳 *Pago:* ${payText}`;
@@ -783,6 +794,7 @@
       const name = document.getElementById('p-name').value;
       const category = document.getElementById('p-category').value;
       const price = parseFloat(document.getElementById('p-price').value);
+      const size = document.getElementById('p-size').value || '';
       const stock = parseInt(document.getElementById('p-stock').value) || 0;
       const variant = document.getElementById('p-variant').value;
       const img = document.getElementById('p-img').value;
@@ -790,11 +802,11 @@
       const img3 = document.getElementById('p-img3').value || '';
 
       try {
-        await window.addDoc(window.colRef, { name, category, price, stock, variant, img, img2, img3, createdAt: new Date() });
+        await window.addDoc(window.colRef, { name, category, price, size, stock, variant, img, img2, img3, createdAt: new Date() });
         document.getElementById('add-form').reset();
         document.getElementById('p-stock').value = 1;
         document.getElementById('img-preview-box').style.display = 'none';
-        alert("¡Producto agregado con stock exitosamente!");
+        alert("¡Producto agregado con talla y stock exitosamente!");
       } catch (err) {
         console.error(err);
         alert("Error al guardar el producto.");
@@ -821,8 +833,9 @@
       itemsToDisplay.forEach(item => {
         const row = document.createElement('div');
         row.className = 'admin-item-row';
+        const sizeInfo = item.size ? ` (Talla: ${item.size})` : '';
         row.innerHTML = `
-          <div><strong>${item.name}</strong> ($${item.price}) - Stock: <strong>${item.stock}</strong></div>
+          <div><strong>${item.name}</strong>${sizeInfo} ($${item.price}) - Stock: <strong>${item.stock}</strong></div>
           <div style="display: flex; gap: 5px;">
             <button style="background: #8a7300; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;" onclick="updateProductStockPrompt('${item.id}', ${item.stock})">Editar Stock</button>
             <button class="admin-del-btn" onclick="deleteProduct('${item.id}')">Eliminar</button>
